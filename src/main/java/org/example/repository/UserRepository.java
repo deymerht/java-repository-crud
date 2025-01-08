@@ -1,6 +1,8 @@
 package org.example.repository;
+
 import org.example.model.User;
 import org.example.util.DatabaseConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -66,7 +68,11 @@ public class UserRepository implements IRepository<User> {
                         followers = EXCLUDED.followers,
                         following = EXCLUDED.following;
                 """;
-        try (PreparedStatement preparedStatement = getConnection().prepareStatement(query)) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = getConnection().prepareStatement(query)
+        ) {
+            connection.setAutoCommit(false);
             preparedStatement.setString(1, user.getId());
             preparedStatement.setString(2, user.getFirstName());
             preparedStatement.setString(3, user.getLastName());
@@ -79,11 +85,18 @@ public class UserRepository implements IRepository<User> {
             preparedStatement.setInt(10, user.getFollowing());
 
             int rowsInserted = preparedStatement.executeUpdate();
+            connection.commit();
             if (rowsInserted > 0) {
                 System.out.println("User inserted successfully.");
             }
         } catch (SQLException e) {
             System.out.println("We have an error: " + e);
+            try (Connection connection = getConnection()) {
+                connection.rollback(); // Revertir los cambios si ocurre un error
+                System.out.println("Transacción revertida debido a un error: " + e.getMessage());
+            } catch (SQLException rollbackEx) {
+                System.out.println("Error al intentar revertir la transacción: " + rollbackEx.getMessage());
+            }
         }
     }
 
