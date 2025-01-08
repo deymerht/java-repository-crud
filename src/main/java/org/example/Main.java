@@ -21,18 +21,18 @@ public class Main {
         newUser.setFollowing(2000);
         try {
             IRepository<User> repository = new UserRepository();
-//            repository.findAll().forEach(System.out::println);
+            repository.findAll().forEach(System.out::println);
 
 //            User user = repository.getById(id);
 //            System.out.println("User whit id: " + id + " " + user);
 
 //            repository.save(newUser);
-            User user = repository.getById(newUser.getId());
-            System.out.println(user);
+//            User user = repository.getById(newUser.getId());
+//            System.out.println(user);
 //            User user = repository.getById(newUser.getId());
 //            System.out.println("User whit id: " + newUser.getId() + " " + user);
-            repository.delete(user.getId());
-            System.out.println(user);
+//            repository.delete(user.getId());
+//            System.out.println(user);
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
